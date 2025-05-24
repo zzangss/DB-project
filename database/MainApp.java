@@ -1,89 +1,68 @@
-package database.dao;
-
-import database.ConnectionManager;
-import database.model.User;
+package database;
 
 import java.sql.*;
+import java.time.*;
+import java.util.*;
 
-public class UserDao {
-    /** 새 사용자 INSERT */
-    public void create(User user) throws SQLException {
-        String sql = ""
-            + "INSERT INTO DB2025_USER "
-            + "(email, password, name, role) "
-            + "VALUES (?, ?, ?, ?)";
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                 sql, Statement.RETURN_GENERATED_KEYS)) {
+import database.ConnectionManager;
+import database.dao.UserDao;
+import database.model.User;
 
-            ps.setString(1, user.getEmail());
-            ps.setString(2, user.getPassword());
-            ps.setString(3, user.getName());
-            ps.setString(4, user.getRole());
-            ps.executeUpdate();
+public class MainApp {
+    private static Scanner scanner = new Scanner(System.in);
+    private static UserDao userDao = new UserDao();
+    private static User currentUser;
 
-            // 생성된 PK(user_id) 가져오기
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    user.setUserId(rs.getInt(1));
+    public static void main(String[] args) throws SQLException {
+    	
+    	
+        try  {
+        	Connection conn = ConnectionManager.getConnection();
+            while (true) {
+                if (currentUser == null) {
+                    showLoginMenu();
+                    
+                } else {
+                    showMainMenu();
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    /** PK로 사용자 조회 */
-    public User findById(int userId) throws SQLException {
-        String sql = ""
-            + "SELECT user_id, email, password, name, role, created_at "
-            + "FROM DB2025_USER "
-            + "WHERE user_id = ?";
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
-
-                User u = new User();
-                u.setUserId(   rs.getInt   ("user_id")                );
-                u.setEmail(    rs.getString("email")                  );
-                u.setPassword( rs.getString("password")               );
-                u.setName(     rs.getString("name")                   );
-                u.setRole(     rs.getString("role")                   );
-                u.setCreatedAt(
-                    rs.getTimestamp("created_at")
-                      .toLocalDateTime()
-                );
-                return u;
-            }
+    private static void showLoginMenu() throws SQLException {
+        System.out.println("=== 로그인 ===");
+        System.out.print("Email: ");
+        String email = scanner.next();
+        System.out.print("password: ");
+        String password = scanner.next();
+        User user = userDao.findByEmailAndPassword(email, password);
+        if (user != null) {
+            currentUser = user;
+            System.out.println("로그인 성공: " + currentUser.getName());
+        } else {
+            System.out.println("로그인 실패. 다시 시도하세요.");
         }
     }
-    
-    public User findByEmailAndPassword(String userEmail, String userPassword) throws SQLException {
-        String sql = ""
-            + "SELECT user_id, email, password, name, role, created_at "
-            + "FROM DB2025_USER "
-            + "WHERE email = ? AND password = ? ";
-        try (Connection conn = ConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, userEmail);
-            ps.setString(2, userPassword);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
-
-                User u = new User();
-                u.setUserId(   rs.getInt   ("user_id")                );
-                u.setEmail(    rs.getString("email")                  );
-                u.setPassword( rs.getString("password")               );
-                u.setName(     rs.getString("name")                   );
-                u.setRole(     rs.getString("role")                   );
-                u.setCreatedAt(
-                    rs.getTimestamp("created_at")
-                      .toLocalDateTime()
-                );
-                return u;
-            }
-        }
+    private static void showMainMenu() throws SQLException {
+        System.out.println("\n=== 메인 메뉴 ===");
+        System.out.println("1. 팀 목록 조회");
+        System.out.println("2. 마이페이지");
+        System.out.println("3. 팀 생성");
+        System.out.println("4. 팀원 초대");
+        System.out.println("5. 초대 수락");
+        System.out.println("6. 팀 탈퇴");
+        System.out.println("7. 역할 배정");
+        System.out.println("8. 과제 등록");
+        System.out.println("9. 내 과제 조회");
+        System.out.println("10. 과제 상태 수정");
+        System.out.println("0. 로그아웃");
+        System.out.print("메뉴 선택: ");
+        String choice = scanner.nextLine();
+        
+        
     }
+
 }
