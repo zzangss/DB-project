@@ -58,4 +58,33 @@ public class UserDao {
             }
         }
     }
+    
+    /** 유저의 이메일과 비밀번호로 유저 정보를 반환하는 메서드 */
+    public User findByEmailAndPassword(String userEmail, String userPassword) throws SQLException {
+        String sql = ""
+            + "SELECT user_id, email, password, name, role, created_at "
+            + "FROM DB2025_USER "
+            + "WHERE email = ? AND password = ? ";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userEmail);
+            ps.setString(2, userPassword);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+
+                User u = new User();
+                u.setUserId(   rs.getInt   ("user_id")                );
+                u.setEmail(    rs.getString("email")                  );
+                u.setPassword( rs.getString("password")               );
+                u.setName(     rs.getString("name")                   );
+                u.setRole(     rs.getString("role")                   );
+                u.setCreatedAt(
+                    rs.getTimestamp("created_at")
+                      .toLocalDateTime()
+                );
+                return u;
+            }
+        }
+    }
 }
