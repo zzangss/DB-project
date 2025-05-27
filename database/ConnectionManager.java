@@ -24,9 +24,9 @@ public class ConnectionManager {
 
     /** 호출한 쪽에서 close() 해 주세요. */
     public static Connection getConnection() throws SQLException {
-        System.out.println("Connecting to database...");
+        //System.out.println("Connecting to database...");
         Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-        System.out.println("✅ DB 연결 성공!");
+       // System.out.println("✅ DB 연결 성공!");
         return conn;
     }
 }
