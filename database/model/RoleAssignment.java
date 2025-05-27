@@ -48,4 +48,6 @@ public class RoleAssignment {
                ", roleName='" + roleName + '\'' +
                '}';
     }
+    
+    
 }
