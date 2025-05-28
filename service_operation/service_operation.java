@@ -8,8 +8,8 @@ import java.time.temporal.ChronoUnit;
 public class service_operation{
 	
 	static final String JDBC_URL="jdbc:mysql://localhost:3306/DB2025TeamTrack";
-	static final String USER="root";
-	static final String PASS="KJSoon0323@";
+	static final String USER="DB2025TeamTrack";
+	static final String PASS="DB2025TeamTrack";
 	
 	public static void main(String[] args) {
 		try(Connection conn = DriverManager.getConnection(JDBC_URL, USER, PASS)){
