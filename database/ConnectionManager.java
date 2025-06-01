@@ -7,11 +7,11 @@ import java.sql.SQLException;
 public class ConnectionManager {
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL =
-        "jdbc:mysql://localhost:3306/DB2025TeamTrack"
+        "jdbc:mysql://localhost:3306/DB2025Team08"
       + "?serverTimezone=Asia/Seoul&useSSL=false"
       + "&allowPublicKeyRetrieval=true";
-    private static final String USER = "DB2025TeamTrack";
-    private static final String PASS = "DB2025TeamTrack";
+    private static final String USER = "DB2025Team08";
+    private static final String PASS = "DB2025Team08";
 
     // 드라이버 로드는 static 블록에서 한 번만
     static {
