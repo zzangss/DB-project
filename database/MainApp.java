@@ -2,6 +2,7 @@ package database;
 
 import java.sql.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import database.ConnectionManager;
@@ -105,7 +106,9 @@ public class MainApp {
         case 7:
         	RoleAssignService.assignRoleToMember(currentUser);
         case 8:
-        	
+            TaskAssignService service = new TaskAssignService();
+            service.assignTask(currentUser);
+            
         
         default:
         	break;	
