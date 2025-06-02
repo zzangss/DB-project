@@ -2,7 +2,9 @@ package database.dao;
 
 import database.ConnectionManager;
 import database.model.User;
+
 import java.sql.*;
+import java.util.*;
 
 public class UserDao {
     /** 새 사용자 INSERT */
@@ -20,6 +22,7 @@ public class UserDao {
             ps.setString(3, user.getName());
             ps.setString(4, user.getRole());
             ps.executeUpdate();
+
             // 생성된 PK(user_id) 가져오기
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -28,8 +31,9 @@ public class UserDao {
             }
         }
     }
+
     /** PK로 사용자 조회 */
-    public User findById(int userId) throws SQLException {
+    public static User findById(int userId) throws SQLException {
         String sql = ""
             + "SELECT user_id, email, password, name, role, created_at "
             + "FROM DB2025_USER "
@@ -55,6 +59,8 @@ public class UserDao {
             }
         }
     }
+    
+    /** 유저의 이메일과 비밀번호로 유저 정보를 반환하는 메서드 */
     public User findByEmailAndPassword(String userEmail, String userPassword) throws SQLException {
         String sql = ""
             + "SELECT user_id, email, password, name, role, created_at "
@@ -82,5 +88,49 @@ public class UserDao {
             }
         }
     }
-}
+    
+    public User findByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM DB2025_USER WHERE email = ?";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("user_id"));
+                    u.setEmail(rs.getString("email"));
+                    u.setPassword(rs.getString("password"));
+                    u.setName(rs.getString("name"));
+                    u.setRole(rs.getString("role"));
+                    return u;
+                }
+                return null;
+            }
+        }
+    }
+    
+    public Map<Integer, User> findUsersByTeamId(int teamId) throws SQLException {
+        Map<Integer, User> map = new HashMap<>();
+        String sql = "SELECT u.user_id, u.name "+
+        			"FROM DB2025_USER u "+
+        			"JOIN DB2025_TEAM_MEMBER m ON u.user_id = m.user_id "+
+        			"WHERE m.team_id = ?";
         
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, teamId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("user_id"));
+                    u.setName(rs.getString("name"));
+                    map.put(u.getUserId(), u);
+                }
+            }
+        }
+
+        return map;
+    }
+
+
+}

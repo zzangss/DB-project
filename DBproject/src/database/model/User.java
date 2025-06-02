@@ -22,6 +22,10 @@ public class User {
         this.role = role;
         this.createdAt = createdAt;
     }
+    
+    public User(int userId) {
+        this.userId = userId;
+    }
 
     public int getUserId() {
         return userId;

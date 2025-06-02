@@ -1,33 +1,33 @@
 package databaseGUI;
 
-import javax.swing.*;        // JFrame, JPanel, JButton, JTextField, JPasswordField 등
-import java.awt.*;           // Layout 관련 (GridLayout 등)
-import java.awt.event.*;     // 버튼 클릭 이벤트 리스너
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
 import database.dao.UserDao;
 import database.model.User;
-//로그인 화면 구성, 사용자 입력을 받아 로그임 시도 -> 성공하면 다른 화면으로 전환
 
 public class LoginPanel extends JPanel {
     public LoginPanel(MainAppGUI app) {
         setLayout(new GridBagLayout());
         setBackground(new Color(245, 245, 245));
-        
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // ✅ 제목 추가
+        // 제목
         JLabel titleLabel = new JLabel("DB 프로젝트 - TeamTrack", JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 24));
         titleLabel.setForeground(new Color(50, 50, 50));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;  // 가로 두 칸 병합
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(titleLabel, gbc);
 
-        // ✅ 나머지 레이블/필드
-        gbc.gridwidth = 1; // 다시 1로 초기화
+        // 이메일/비밀번호 레이블과 입력창
+        gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
 
         JLabel idLabel = new JLabel("이메일:");
@@ -58,16 +58,21 @@ public class LoginPanel extends JPanel {
         gbc.gridx = 1;
         add(registerBtn, gbc);
 
+        // 로그인 버튼 이벤트 처리
         loginBtn.addActionListener(e -> {
-            String email = idField.getText();
+            String email = idField.getText().trim();
             String password = new String(pwField.getPassword());
-            
+
             try {
-            	UserDao userDao = new UserDao();
-            	User user = userDao.findByEmailAndPassword(email, password);
-            	if (user != null) {
+                UserDao userDao = new UserDao();
+                User user = userDao.findByEmailAndPassword(email, password);
+
+                if (user != null) {
+                    // ✅ 로그인된 사용자 ID 저장
+                    app.setUserId(user.getUserId());
+
                     JOptionPane.showMessageDialog(this, "로그인 성공! 어서오세요, " + user.getName() + "님");
-                    app.showPanel("menu");
+                    app.showPanel("menu");  // 메뉴 화면으로 전환
                 } else {
                     JOptionPane.showMessageDialog(this, "로그인 실패: 이메일 또는 비밀번호가 틀렸습니다.");
                 }
@@ -77,6 +82,10 @@ public class LoginPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "로그인 중 오류 발생: " + ex.getMessage());
             }
         });
+
+        // 회원가입 버튼 이벤트 처리
+        registerBtn.addActionListener(e -> {
+            app.showPanel("register");
+        });
     }
 }
-

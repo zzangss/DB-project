@@ -1,9 +1,11 @@
 package databaseGUI;
 
 import javax.swing.*;
+
 import java.awt.*;
-import database.model.User;
+
 import database.dao.UserDao;
+import database.model.User;
 
 public class RegisterPanel extends JPanel {
     public RegisterPanel(MainAppGUI app) {

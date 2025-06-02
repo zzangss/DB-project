@@ -1,74 +1,83 @@
 package databaseGUI;
 
+import database.dao.TeamDao;
+import database.model.Team;
+import database.model.User;
+
 import javax.swing.*;
 import java.awt.*;
-import database.model.User;
-import database.dao.UserDao;
+import java.sql.SQLException;
+import java.util.List;
 
 public class MyPagePanel extends JPanel {
-    private JLabel nameLabel;
-    private JLabel emailLabel;
-    private JLabel roleLabel;
-    private JLabel dateLabel;
+    private MainAppGUI parent;
+    private int userId;
 
-    public MyPagePanel(MainAppGUI app, int userId) {
-        setLayout(new GridBagLayout());
-        setBackground(new Color(245, 245, 245));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 10, 15, 10);
+    public MyPagePanel(MainAppGUI parent, int userId) {
+        this.parent = parent;
+        this.userId = userId;
+        setLayout(new BorderLayout());  // ✅ BorderLayout 명시 (오류 방지)
+        setBackground(new Color(250, 250, 250));
 
-        JLabel title = new JLabel("🙋‍♀️ 내 정보");
-        title.setFont(new Font("맑은 고딕", Font.BOLD, 24));
-        title.setForeground(new Color(40, 40, 40));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
-        add(title, gbc);
+        initializeUI();
+    }
 
-        // 라벨 초기화
-        nameLabel = new JLabel();
-        emailLabel = new JLabel();
-        roleLabel = new JLabel();
-        dateLabel = new JLabel();
+    private void initializeUI() {
+        // 제목 라벨
+        JLabel titleLabel = new JLabel("📄 나의 정보", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 20, 0));
+        add(titleLabel, BorderLayout.NORTH);
 
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.WEST;
+        // 사용자 정보 패널
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBackground(new Color(250, 250, 250));
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 60, 20, 60));
 
-        gbc.gridx = 0; gbc.gridy = 1; add(new JLabel("이름:"), gbc);
-        gbc.gridx = 1; add(nameLabel, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 2; add(new JLabel("이메일:"), gbc);
-        gbc.gridx = 1; add(emailLabel, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 3; add(new JLabel("권한:"), gbc);
-        gbc.gridx = 1; add(roleLabel, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 4; add(new JLabel("가입일:"), gbc);
-        gbc.gridx = 1; add(dateLabel, gbc);
-
-        JButton backBtn = new JButton("뒤로가기");
-        backBtn.setBackground(new Color(255, 223, 186));
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(backBtn, gbc);
-
-        backBtn.addActionListener(e -> {
-            app.showPanel("menu");
-        });
-
-        // 🟡 실제 DB에서 사용자 정보 불러오기
         try {
-            UserDao dao = new UserDao();
-            User user = dao.findById(userId);
-            if (user != null) {
-                nameLabel.setText(user.getName());
-                emailLabel.setText(user.getEmail());
-                roleLabel.setText(user.getRole());
-                dateLabel.setText(user.getCreatedAt().toLocalDate().toString());
+            TeamDao teamDao = new TeamDao();
+            List<Team> teams = teamDao.getTeamsByUser(new User(userId));
+
+            if (teams.isEmpty()) {
+                infoPanel.add(createInfoLabel("⚠️ 소속된 팀이 없습니다."));
             } else {
-                JOptionPane.showMessageDialog(this, "유저를 찾을 수 없습니다.");
+                Team team = teams.get(0); // 첫 번째 팀 기준
+                infoPanel.add(createInfoLabel("사용자 ID: " + userId));
+                infoPanel.add(createInfoLabel("🧑‍🤝‍🧑 팀 이름: " + team.getTeamName()));
+                infoPanel.add(createInfoLabel("📘 주제: " + team.getSubject()));
+                infoPanel.add(createInfoLabel("📅 마감일: " + team.getDeadline().toLocalDate()));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "오류 발생: " + ex.getMessage());
+
+        } catch (SQLException e) {
+            infoPanel.add(createInfoLabel("❌ 오류 발생: " + e.getMessage()));
         }
+
+        add(infoPanel, BorderLayout.CENTER);
+
+        // 뒤로가기 버튼
+        JButton backBtn = new JButton("⬅ 뒤로가기");
+        backBtn.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        backBtn.setBackground(new Color(200, 230, 201));
+        backBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backBtn.setFocusPainted(false);
+        backBtn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(new Color(250, 250, 250));
+        btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 30, 0));
+        btnPanel.add(backBtn);
+
+        backBtn.addActionListener(e -> parent.showPanel("menu"));
+
+        add(btnPanel, BorderLayout.SOUTH);
+    }
+
+    private JLabel createInfoLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("SansSerif", Font.PLAIN, 17));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        return label;
     }
 }
