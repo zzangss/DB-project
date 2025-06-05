@@ -121,7 +121,17 @@ public class TeamDao {
     }
 
     public boolean removeMember(Connection conn, int teamId, int userId) throws SQLException {
-        String sql = "DELETE FROM DB2025_team_member WHERE team_id = ? AND user_id = ?";
+    	String deleteRoleSql = 
+    	        "DELETE FROM DB2025_role_assignment WHERE team_id = ? AND user_id = ?";
+    	    try (PreparedStatement psRole = conn.prepareStatement(deleteRoleSql)) {
+    	        psRole.setInt(1, teamId);
+    	        psRole.setInt(2, userId);
+    	        psRole.executeUpdate();
+    	        // executeUpdate() > 0 여부는 굳이 체크하지 않아도 되고, 
+    	        // 만약 역할이 없었다면 0이 리턴될 뿐이므로 에러로 처리되지는 않습니다.
+    	    }
+    	
+    	String sql = "DELETE FROM DB2025_team_member WHERE team_id = ? AND user_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, teamId);
             ps.setInt(2, userId);
