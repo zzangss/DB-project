@@ -27,40 +27,45 @@ public class MainMenuPanel extends JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
 
         buttonPanel.add(createSmallButton("👥 팀 구성원 보기", e -> parent.showTeamPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         buttonPanel.add(createSmallButton("🙋 마이페이지", e -> parent.showMyPagePanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         // 팀 관리 버튼
         buttonPanel.add(createSmallButton("🛠 팀 관리", e -> openTeamManagePanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         // 팀원 추가 버튼
         buttonPanel.add(createSmallButton("➕ 팀원 추가", e -> openTeamMemberAddPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         buttonPanel.add(createSmallButton("📝 피드백 보기", e -> parent.showFeedbackPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         buttonPanel.add(createSmallButton("📊 기여도 보기", e -> parent.showContributionPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         buttonPanel.add(createSmallButton("📋 과제 상태 보기", e -> parent.showTaskStatusPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         buttonPanel.add(createSmallButton("📋 회의록", e -> {parent.setCurrentTeamId(1); parent.showMeetingPanel(); }));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
 
         // 피드백 보내기 버튼 - 현재 팀 설정 후 화면 전환
         buttonPanel.add(createSmallButton("✉ 피드백 보내기", e -> openFeedbackSendPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
         
         buttonPanel.add(createSmallButton("📌 과제 등록", e -> openTaskRegisterPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
         
         buttonPanel.add(createSmallButton("🎭 역할 부여", e -> openRoleAssignPanel()));
-        buttonPanel.add(Box.createVerticalStrut(10));
+        buttonPanel.add(Box.createVerticalStrut(8));
+        
+        buttonPanel.add(createSmallButton("🆕 팀 만들기",e -> parent.showTeamCreatePanel()));
+        buttonPanel.add(Box.createVerticalStrut(8));
+
+
         
         buttonPanel.add(createSmallButton("🔐 로그아웃", e -> parent.showPanel("login")));
 
