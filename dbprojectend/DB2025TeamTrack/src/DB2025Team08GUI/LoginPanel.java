@@ -58,7 +58,6 @@ public class LoginPanel extends JPanel {
         gbc.gridx = 1;
         add(registerBtn, gbc);
 
-        // ✅ 로그인 버튼 이벤트 처리
         loginBtn.addActionListener(e -> {
             String email = idField.getText().trim();
             String password = new String(pwField.getPassword());
@@ -70,18 +69,18 @@ public class LoginPanel extends JPanel {
                 if (user != null) {
                     app.setUserId(user.getUserId());
 
-                    // ✅ 로그인한 사용자의 팀 ID 가져오기
                     TeamDao teamDao = new TeamDao();
                     List<Team> teams = teamDao.getTeamsByUser(user);
+
                     if (!teams.isEmpty()) {
-                        app.setCurrentTeamId(teams.get(0).getTeamId());  // ✅ 핵심!
+                        app.setCurrentTeamId(teams.get(0).getTeamId());
                     } else {
-                        JOptionPane.showMessageDialog(this, "팀이 없습니다. 팀에 먼저 소속되어야 합니다.");
-                        return;
+                        app.setCurrentTeamId(0); // 또는 -1 등, 팀 없는 상태를 의미하는 값
                     }
 
                     JOptionPane.showMessageDialog(this, "로그인 성공! 어서오세요, " + user.getName() + "님");
-                    app.showPanel("menu");
+                    app.showPanel("menu");  // ✅ 무조건 메인메뉴로 이동
+
                 } else {
                     JOptionPane.showMessageDialog(this, "로그인 실패: 이메일 또는 비밀번호가 틀렸습니다.");
                 }
@@ -91,6 +90,8 @@ public class LoginPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "로그인 중 오류 발생: " + ex.getMessage());
             }
         });
+
+
 
         registerBtn.addActionListener(e -> {
             app.showPanel("register");
