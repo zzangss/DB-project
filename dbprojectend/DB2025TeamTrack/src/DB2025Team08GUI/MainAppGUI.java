@@ -40,6 +40,7 @@ public class MainAppGUI extends JFrame {
 		mainPanel.add(new FeedbackSendPanel(this), "feedbackSend");
 		mainPanel.add(new TaskRegisterPanel(this), "taskRegister");
 		mainPanel.add(new RoleAssignPanel(this), "roleAssign");
+		mainPanel.add(new TeamCreatePanel(this), "createTeam");
 
 		add(mainPanel);
 		cardLayout.show(mainPanel, "login");
@@ -178,6 +179,15 @@ public class MainAppGUI extends JFrame {
 		mainPanel.add(panel, "roleAssign");
 		panel.loadTeamMembers(); // ✅ 팀원 불러오기
 		cardLayout.show(mainPanel, "roleAssign");
+	}
+
+	public void showTeamCreatePanel() {
+	    cardLayout.show(mainPanel, "createTeam");
+	}
+	
+	// 해결: MainAppGUI.java에 아래 메서드 추가
+	public void showMainMenuPanel() {
+	    cardLayout.show(mainPanel, "menu");
 	}
 
 	public static void main(String[] args) {
