@@ -74,13 +74,11 @@ public class MeetingRegisterPanel extends JPanel {
 
                     if (success) {
                         JOptionPane.showMessageDialog(this, "회의록이 등록되었습니다.");
-                        
-                        parent.showPanel("meeting");
-                        parent.getMeetingPanel().refreshMeetings();
 
-                        
-                        parent.showMeetingPanel();
-                    } else {
+                        // 🔥 teamId가 유지된 상태에서 회의 패널을 보여주고 새로고침도 보장
+                        parent.showMeetingPanel(); // 내부에서 refreshMeetings() 이미 포함되어 있음
+                    }
+                    else {
                         JOptionPane.showMessageDialog(this, "등록에 실패했습니다.");
                     }
                 }

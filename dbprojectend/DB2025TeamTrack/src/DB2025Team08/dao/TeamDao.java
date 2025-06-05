@@ -108,11 +108,11 @@ public class TeamDao {
             return rs.next();
         }
     }
-    
     public boolean addMember(Connection conn, int teamId, int userId) throws SQLException {
         if (isMember(teamId, userId)) return false;
 
         String sql = "INSERT INTO DB2025_team_member (team_id, user_id) VALUES (?, ?)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, teamId);
             ps.setInt(2, userId);

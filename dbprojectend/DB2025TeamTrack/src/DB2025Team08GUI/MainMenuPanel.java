@@ -49,7 +49,7 @@ public class MainMenuPanel extends JPanel {
         buttonPanel.add(createSmallButton("📋 과제 상태 보기", e -> parent.showTaskStatusPanel()));
         buttonPanel.add(Box.createVerticalStrut(10));
 
-        buttonPanel.add(createSmallButton("📋 회의록", e -> parent.showPanel("meeting")));
+        buttonPanel.add(createSmallButton("📋 회의록", e -> {parent.setCurrentTeamId(1); parent.showMeetingPanel(); }));
         buttonPanel.add(Box.createVerticalStrut(10));
 
         // 피드백 보내기 버튼 - 현재 팀 설정 후 화면 전환

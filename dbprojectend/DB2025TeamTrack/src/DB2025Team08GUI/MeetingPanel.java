@@ -27,7 +27,7 @@ public class MeetingPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(meetingList);
         add(scrollPane, BorderLayout.CENTER);
 
-        // ✅ 버튼 패널 추가
+        // 버튼 패널 추가
         JPanel buttonPanel = new JPanel();
         JButton backBtn = new JButton("⬅ 뒤로가기");
         JButton writeBtn = new JButton("➕ 회의록 작성");
@@ -39,12 +39,12 @@ public class MeetingPanel extends JPanel {
         buttonPanel.add(writeBtn);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        loadMeetings(); // ✅ 생성과 동시에 로드
+        loadMeetings(); // 생성과 동시에 로드
     }
 
     private void loadMeetings() {
         try {
-            meetingModel.clear(); // 기존 내용 초기화
+            
             int teamId = parent.getCurrentTeamId();
 
             MeetingDao dao = new MeetingDao();
@@ -64,6 +64,8 @@ public class MeetingPanel extends JPanel {
             e.printStackTrace();
             meetingModel.addElement("불러오는 중 오류 발생: " + e.getMessage());
         }
+        System.out.println("👉 currentTeamId = " + parent.getCurrentTeamId());
+
     }
 
     // ✅ 외부에서 새로고침할 수 있도록 메서드 제공
