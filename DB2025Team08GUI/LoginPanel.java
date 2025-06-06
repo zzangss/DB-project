@@ -1,12 +1,13 @@
 package DB2025Team08GUI;
 
 import javax.swing.*;
-
 import DB2025Team08.dao.UserDao;
+import DB2025Team08.dao.TeamDao;             // ✅ 추가
 import DB2025Team08.model.User;
+import DB2025Team08.model.Team;             // ✅ 추가
 
 import java.awt.*;
-import java.awt.event.*;
+import java.util.List;                     // ✅ 추가
 
 public class LoginPanel extends JPanel {
     public LoginPanel(MainAppGUI app) {
@@ -17,7 +18,6 @@ public class LoginPanel extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // 제목
         JLabel titleLabel = new JLabel("DB 프로젝트 - TeamTrack", JLabel.CENTER);
         titleLabel.setFont(new Font("맑은 고딕", Font.BOLD, 24));
         titleLabel.setForeground(new Color(50, 50, 50));
@@ -27,7 +27,6 @@ public class LoginPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         add(titleLabel, gbc);
 
-        // 이메일/비밀번호 레이블과 입력창
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
 
@@ -59,7 +58,6 @@ public class LoginPanel extends JPanel {
         gbc.gridx = 1;
         add(registerBtn, gbc);
 
-        // 로그인 버튼 이벤트 처리
         loginBtn.addActionListener(e -> {
             String email = idField.getText().trim();
             String password = new String(pwField.getPassword());
@@ -69,11 +67,20 @@ public class LoginPanel extends JPanel {
                 User user = userDao.findByEmailAndPassword(email, password);
 
                 if (user != null) {
-                    // ✅ 로그인된 사용자 ID 저장
                     app.setUserId(user.getUserId());
 
+                    TeamDao teamDao = new TeamDao();
+                    List<Team> teams = teamDao.getTeamsByUser(user);
+
+                    if (!teams.isEmpty()) {
+                        app.setCurrentTeamId(teams.get(0).getTeamId());
+                    } else {
+                        app.setCurrentTeamId(0); // 또는 -1 등, 팀 없는 상태를 의미하는 값
+                    }
+
                     JOptionPane.showMessageDialog(this, "로그인 성공! 어서오세요, " + user.getName() + "님");
-                    app.showPanel("menu");  // 메뉴 화면으로 전환
+                    app.showPanel("menu");  // ✅ 무조건 메인메뉴로 이동
+
                 } else {
                     JOptionPane.showMessageDialog(this, "로그인 실패: 이메일 또는 비밀번호가 틀렸습니다.");
                 }
@@ -84,7 +91,8 @@ public class LoginPanel extends JPanel {
             }
         });
 
-        // 회원가입 버튼 이벤트 처리
+
+
         registerBtn.addActionListener(e -> {
             app.showPanel("register");
         });
