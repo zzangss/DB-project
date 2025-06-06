@@ -12,15 +12,28 @@ import DB2025Team08.dto.UserDto;
 import DB2025Team08.model.Team;
 import DB2025Team08.model.User;
 
+/**
+ * 팀 관련 비즈니스 로직을 처리하는 서비스 클래스.
+ */
 public class TeamService {
+    /**
+     * 팀 DAO 객체
+     */
     private final TeamDao dao;
 
+    /**
+     * 기본 생성자.
+     */
     public TeamService() {
         this.dao = new TeamDao();
     }
 
     /**
-     * 팀 생성과 리더 멤버 추가를 한 트랜잭션으로 묶음
+     * 팀 생성과 리더 멤버 추가를 하나의 트랜잭션으로 처리한다.
+     *
+     * @param dto 팀 생성 정보를 담은 DTO
+     * @return 생성된 팀 ID
+     * @throws Exception 생성 실패 시 예외 발생
      */
     public int createTeam(TeamDto dto) throws Exception {
         Connection conn = null;
@@ -72,7 +85,12 @@ public class TeamService {
     }
 
     /**
-     * 멤버 초대: 이메일 조회 후 즉시 addMember (단일 삽입이므로 트랜잭션 생략 가능)
+     * 이메일로 조회한 사용자에게 팀 멤버로 초대한다.
+     *
+     * @param teamId 초대할 팀 ID
+     * @param dto    초대할 사용자 정보를 담은 DTO
+     * @return 초대 성공 시 true, 실패 시 false
+     * @throws Exception 오류 발생 시 예외 발생
      */
     public boolean inviteMember(int teamId, UserDto dto) throws Exception {
         Connection conn = null;
@@ -117,7 +135,13 @@ public class TeamService {
     }
 
     /**
-     * 팀장 권한 위임과 본인 탈퇴를 하나의 트랜잭션으로 묶음
+     * 팀장 권한을 위임하고 본인을 팀에서 탈퇴한다.
+     *
+     * @param teamId      팀 ID
+     * @param leaderId    현재 팀장 ID
+     * @param newLeaderId 새로 위임할 팀장 ID
+     * @return 위임 및 탈퇴 성공 시 true, 실패 시 false
+     * @throws Exception 오류 발생 시 예외 발생
      */
     public boolean delegateAndLeave(int teamId, int leaderId, int newLeaderId) throws Exception {
         Connection conn = null;
@@ -126,7 +150,7 @@ public class TeamService {
             conn.setAutoCommit(false);
 
             // ① 현재 팀장 여부 확인
-            if (!dao.isLeader( teamId, leaderId)) {
+            if (!dao.isLeader(teamId, leaderId)) {
                 conn.rollback();
                 return false;
             }
@@ -167,7 +191,23 @@ public class TeamService {
     }
 
     /**
-     * 일반 멤버 탈퇴
+     * 팀의 구성원 목록을 조회한다.
+     *
+     * @param teamId 조회할 팀 ID
+     * @return 팀 구성원 목록
+     * @throws Exception 오류 발생 시 예외 발생
+     */
+    public List<User> getMembersOfTeam(int teamId) throws Exception {
+        return dao.getTeamMembersByTeamId(teamId);
+    }
+
+    /**
+     * 일반 멤버를 팀에서 탈퇴시킨다.
+     *
+     * @param teamId 팀 ID
+     * @param userId 탈퇴할 사용자 ID
+     * @return 탈퇴 성공 시 true, 실패 시 false
+     * @throws Exception 오류 발생 시 예외 발생
      */
     public boolean leaveTeam(int teamId, int userId) throws Exception {
         Connection conn = null;
@@ -176,8 +216,8 @@ public class TeamService {
             conn.setAutoCommit(false);
 
             // 1) 팀장 여부 및 마감일 조회 (트랜잭션 내에서 수행)
-            boolean isLeader = dao.isLeader( teamId, userId);
-            LocalDate deadline = dao.getDeadline( teamId);
+            boolean isLeader = dao.isLeader(teamId, userId);
+            LocalDate deadline = dao.getDeadline(teamId);
 
             // 2) 조건 검사
             if (!isLeader && LocalDate.now().isBefore(deadline)) {
