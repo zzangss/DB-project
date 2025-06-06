@@ -51,7 +51,7 @@ public class MeetingPanel extends JPanel {
             List<MeetingDto> meetings = dao.findMeetingsByTeamId(teamId); // ✅ 이 메서드가 dao에 구현돼 있어야 함
 
             if (meetings.isEmpty()) {
-                meetingModel.addElement("회의록이 없습니다.");
+                meetingModel.addElement("회의록");
             } else {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 for (MeetingDto meeting : meetings) {
